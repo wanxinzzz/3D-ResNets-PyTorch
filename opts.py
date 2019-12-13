@@ -5,7 +5,7 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--root_path',
-        default='/root/data/ActivityNet',
+        default='',
         type=str,
         help='Root directory path of data')
     parser.add_argument(

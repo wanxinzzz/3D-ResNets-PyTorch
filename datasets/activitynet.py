@@ -112,6 +112,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         idx_to_class[label] = name
 
     dataset = {}
+    index = 0
     for i in range(len(video_names)):
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
@@ -148,7 +149,8 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                 if len(frame_indices) < 16:
                     continue
                 sample['frame_indices'] = frame_indices
-                dataset[i] = sample
+                dataset[index] = sample
+                index += 1
             else:
                 if n_samples_for_each_video > 1:
                     step = max(1,
@@ -164,7 +166,8 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                     if len(frame_indices) < 16:
                         continue
                     sample_j['frame_indices'] = frame_indices
-                    dataset[i] = sample_j
+                    dataset[index] = sample_j
+                    index += 1
 
     return dataset, idx_to_class
 

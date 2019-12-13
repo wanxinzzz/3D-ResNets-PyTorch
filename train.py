@@ -103,7 +103,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     # epoch message
     time_message = [divmod(int(batch_time.sum), 60), divmod(int(data_time.sum), 60)]
     print('-------------------------------------------------------')
-    print('Epoch: [{0}]\t'
+    print('Train Epoch: [{0}]\t'
           'Time {tmessage[0][0]}:{tmessage[0][1]}\t'
           'Data {tmessage[1][0]}:{tmessage[1][1]}\t'
           'Loss {loss:.4f}\t'

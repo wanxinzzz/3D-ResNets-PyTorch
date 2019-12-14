@@ -84,10 +84,10 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
             'iter': (epoch - 1) * len(data_loader) + (i + 1),
             'loss': losses.val,
             'acc': accuracies.val,
-            'lr': optimizer.param_groups[0]['lr']
+            'lr': optimizer.param_groups[-1]['lr']
         })
 
-        print('Train Epoch: [{0}][{1}/{2}]\t'
+        print('Epoch: [{0}][{1}/{2}]\t'
               'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
               'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
@@ -107,17 +107,19 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
           'Time {tmessage[0][0]}:{tmessage[0][1]}\t'
           'Data {tmessage[1][0]}:{tmessage[1][1]}\t'
           'Loss {loss:.4f}\t'
-          'Acc {acc:.3f}%'.format(
+          'Acc {acc:.3f}%\t'
+          'LR {lr}'.format(
             epoch,
             tmessage=time_message,
             loss=losses.avg,
-            acc=accuracies.avg*100))
+            acc=accuracies.avg * 100,
+            lr=optimizer.param_groups[-1]['lr']))
 
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
         'acc': accuracies.avg,
-        'lr': optimizer.param_groups[0]['lr']
+        'lr': optimizer.param_groups[-1]['lr']
     })
 
     if epoch % opt.checkpoint == 0:

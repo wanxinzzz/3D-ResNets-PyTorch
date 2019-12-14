@@ -34,11 +34,11 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
             batch_time.update(time.time() - end_time)
             end_time = time.time()
 
-            print('Val Epoch: [{0}][{1}/{2}]\t'
-                'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
+            print('Epoch: [{0}][{1}/{2}]\t'
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                  'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
+                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                  'Acc {acc.val:.3f}% ({acc.avg:.3f}%)'.format(
                     epoch,
                     i + 1,
                     len(data_loader),
@@ -58,7 +58,7 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
             epoch,
             tmessage=time_message,
             loss=losses.avg,
-            acc=accuracies.avg*100))
+            acc=accuracies.avg * 100))
 
     logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 

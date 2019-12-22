@@ -130,6 +130,13 @@ def parse_opts():
         'Training begins at this epoch. Previous trained model indicated by resume_path is loaded.'
     )
     parser.add_argument(
+        '--n_val_epochs',
+        default=1,
+        type=int,
+        help=
+        'Evalute model at every this epoch'
+    )
+    parser.add_argument(
         '--n_val_samples',
         default=3,
         type=int,

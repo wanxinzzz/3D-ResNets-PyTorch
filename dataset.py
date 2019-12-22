@@ -2,6 +2,7 @@ from datasets.kinetics import Kinetics
 from datasets.activitynet import ActivityNet
 from datasets.ucf101 import UCF101
 from datasets.hmdb51 import HMDB51
+import os
 
 
 def get_training_set(opt, spatial_transform, temporal_transform,
@@ -9,8 +10,9 @@ def get_training_set(opt, spatial_transform, temporal_transform,
     assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51']
 
     if opt.dataset == 'kinetics':
+        video_path = os.path.join(opt.video_path, 'train')
         training_data = Kinetics(
-            opt.video_path,
+			video_path,
             opt.annotation_path,
             'training',
             spatial_transform=spatial_transform,
@@ -50,8 +52,9 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
     assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51']
 
     if opt.dataset == 'kinetics':
+        video_path = os.path.join(opt.video_path, 'val')
         validation_data = Kinetics(
-            opt.video_path,
+            video_path,
             opt.annotation_path,
             'validation',
             opt.n_val_samples,
@@ -102,8 +105,9 @@ def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
     elif opt.test_subset == 'test':
         subset = 'testing'
     if opt.dataset == 'kinetics':
+        video_path = os.path.join(opt.video_path, 'val')
         test_data = Kinetics(
-            opt.video_path,
+            video_path,
             opt.annotation_path,
             subset,
             0,

@@ -135,12 +135,11 @@ if __name__ == '__main__':
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, train_batch_logger)
-        if not opt.no_val:
+        if not opt.no_val and (i % opt.n_val_epochs == 0):
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
-
-        if not opt.no_train and not opt.no_val:
-            scheduler.step(validation_loss)
+            if not opt.no_train:
+                scheduler.step(validation_loss)
 
     if opt.test:
         spatial_transform = Compose([

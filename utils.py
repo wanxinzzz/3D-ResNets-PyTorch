@@ -1,4 +1,5 @@
 import csv
+import torch
 
 
 class AverageMeter(object):
@@ -40,6 +41,43 @@ class Logger(object):
 
         self.logger.writerow(write_values)
         self.log_file.flush()
+
+
+class data_prefetcher():
+    def __init__(self, loader):
+        self.loader = iter(loader)
+        self.stream = torch.cuda.Stream()
+        # self.mean = torch.tensor([110.63666788, 103.16065604, 96.29023126]).cuda().view(1,3,1,1,1)
+        # self.std = torch.tensor([1, 1, 1]).cuda().view(1,3,1,1,1)
+        # With Amp, it isn't necessary to manually convert data to half.
+        # if args.fp16:
+        #     self.mean = self.mean.half()
+        #     self.std = self.std.half()
+        self.preload()
+
+    def preload(self):
+        try:
+            self.next_input, self.next_target = next(self.loader)
+        except StopIteration:
+            self.next_input = None
+            self.next_target = None
+            return
+        with torch.cuda.stream(self.stream):
+            self.next_input = self.next_input.cuda(non_blocking=True)
+            self.next_target = self.next_target.cuda(non_blocking=True)
+            # With Amp, it isn't necessary to manually convert data to half.
+            # if args.fp16:
+            #     self.next_input = self.next_input.half()
+            # else:
+            self.next_input = self.next_input.float()
+            # self.next_input = self.next_input.sub_(self.mean).div_(self.std)
+
+    def next(self):
+        torch.cuda.current_stream().wait_stream(self.stream)
+        input = self.next_input
+        target = self.next_target
+        self.preload()
+        return input, target
 
 
 def load_value_file(file_path):

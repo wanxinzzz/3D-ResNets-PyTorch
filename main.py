@@ -75,6 +75,7 @@ if __name__ == '__main__':
         target_transform = ClassLabel()
         training_data = get_training_set(opt, spatial_transform,
                                          temporal_transform, target_transform)
+        print('Len of training data is:', len(training_data))
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.batch_size,
@@ -111,6 +112,7 @@ if __name__ == '__main__':
         target_transform = ClassLabel()
         validation_data = get_validation_set(
             opt, spatial_transform, temporal_transform, target_transform)
+        print('Len of validation data is:', len(validation_data))
         val_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=opt.batch_size,
@@ -152,6 +154,7 @@ if __name__ == '__main__':
 
         test_data = get_test_set(opt, spatial_transform, temporal_transform,
                                  target_transform)
+        print('Len of test data is:', len(test_data))
         test_loader = torch.utils.data.DataLoader(
             test_data,
             batch_size=opt.batch_size,

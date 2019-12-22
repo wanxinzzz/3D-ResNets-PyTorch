@@ -96,11 +96,13 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
         video_path = os.path.join(root_path, video_names[i])
         if not os.path.exists(video_path):
+            print('lose video: ', video_path)
             continue
 
         n_frames_file_path = os.path.join(video_path, 'n_frames')
         n_frames = int(load_value_file(n_frames_file_path))
         if n_frames <= 0:
+            print('video no frame: ', video_path)
             continue
 
         begin_t = 1

@@ -18,13 +18,16 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     losses = AverageMeter()
     accuracies = AverageMeter()
 
+    prefetcher = data_prefetcher(data_loader)
     end_time = time.time()
-    for i, (inputs, targets) in enumerate(data_loader):
+    inputs, targets = prefetcher.next()
+    i = 0
+    while inputs is not None:
         data_time.update(time.time() - end_time)
 
-        if not opt.no_cuda:
-            targets = targets.cuda(non_blocking=True)
-            inputs = inputs.cuda(non_blocking=True)
+        # if not opt.no_cuda:
+        #     targets = targets.cuda(non_blocking=True)
+        #     inputs = inputs.cuda(non_blocking=True)
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         acc = calculate_accuracy(outputs, targets)
@@ -35,9 +38,6 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-        batch_time.update(time.time() - end_time)
-        end_time = time.time()
 
         batch_logger.log({
             'epoch': epoch,
@@ -60,6 +60,11 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
                   data_time=data_time,
                   loss=losses,
                   acc=accuracies))
+
+        batch_time.update(time.time() - end_time)
+        end_time = time.time()
+        inputs, targets = prefetcher.next()
+        i += 1
     
     # epoch message
     time_message = [divmod(int(batch_time.sum), 60), divmod(int(data_time.sum), 60)]

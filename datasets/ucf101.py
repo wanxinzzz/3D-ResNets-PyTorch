@@ -88,7 +88,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     for name, label in class_to_idx.items():
         idx_to_class[label] = name
 
-    dataset = {}
+    dataset = []
     index = 0
     for i in range(len(video_names)):
         if i % 1000 == 0:
@@ -118,7 +118,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
         if n_samples_for_each_video == 1:
             sample['frame_indices'] = list(range(1, n_frames + 1))
-            dataset[index] = sample
+            dataset.append(sample)
             index += 1
         else:
             if n_samples_for_each_video > 1:
@@ -131,7 +131,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                 sample_j = copy.deepcopy(sample)
                 sample_j['frame_indices'] = list(
                     range(j, min(n_frames + 1, j + sample_duration)))
-                dataset[index] = sample_j
+                dataset.append(sample_j)
                 index += 1
 
     return dataset, idx_to_class

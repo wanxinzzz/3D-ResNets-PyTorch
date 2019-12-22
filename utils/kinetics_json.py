@@ -15,7 +15,8 @@ def convert_csv_to_dict(csv_path, subset):
                                  '%06d' % row['time_end'])
         keys.append(basename)
         if subset != 'testing':
-            key_labels.append(row['label'])
+            key_labels.append(row['label'].replace(' ', '_'))
+
 
     database = {}
     for i in range(len(keys)):
@@ -36,6 +37,9 @@ def load_labels(train_csv_path):
 
 def convert_kinetics_csv_to_activitynet_json(train_csv_path, val_csv_path, test_csv_path, dst_json_path):
     labels = load_labels(train_csv_path)
+    labels.sort()
+    for i in range(len(labels)):
+        labels[i] = labels[i].replace(' ', '_')
     train_database = convert_csv_to_dict(train_csv_path, 'training')
     val_database = convert_csv_to_dict(val_csv_path, 'validation')
     test_database = convert_csv_to_dict(test_csv_path, 'testing')

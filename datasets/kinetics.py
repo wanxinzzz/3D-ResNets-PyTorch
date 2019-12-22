@@ -65,27 +65,24 @@ def get_class_labels(data):
     return class_labels_map
 
 
-def get_video_names_and_annotations(data, subset):
+def get_video_names_and_annotations(root_path):
     video_names = []
     annotations = []
-
-    for key, value in data['database'].items():
-        this_subset = value['subset']
-        if this_subset == subset:
-            if subset == 'testing':
-                video_names.append('test/{}'.format(key))
-            else:
-                label = value['annotations']['label']
-                video_names.append('{}/{}'.format(label, key))
-                annotations.append(value['annotations'])
-
+    classes = os.listdir(root_path)
+    for video_class in classes:
+        class_path = os.path.join(root_path, video_class)
+        videos = os.listdir(class_path)
+        for video in videos:
+            video_name = os.path.join(video_class, video)
+            video_names.append(video_name)
+            annotations.append(video_class)
     return video_names, annotations
 
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                  sample_duration):
     data = load_annotation_data(annotation_path)
-    video_names, annotations = get_video_names_and_annotations(data, subset)
+    video_names, annotations = get_video_names_and_annotations(root_path)
     class_to_idx = get_class_labels(data)
     idx_to_class = {}
     for name, label in class_to_idx.items():
@@ -108,14 +105,18 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
         begin_t = 1
         end_t = n_frames
+        if subset == 'training':
+            video_id = video_names[i][:-14].split('/')[1]
+        else:
+            video_id = video_names[i].split('/')[1]
         sample = {
             'video': video_path,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
-            'video_id': video_names[i][:-14].split('/')[1]
+            'video_id': video_id
         }
         if len(annotations) != 0:
-            sample['label'] = class_to_idx[annotations[i]['label']]
+            sample['label'] = class_to_idx[annotations[i]]
         else:
             sample['label'] = -1
 
@@ -170,7 +171,7 @@ class Kinetics(data.Dataset):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
-        print('The len of all load data is:', len(self.data))
+        print('Len of all load data is:', len(self.data))
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
